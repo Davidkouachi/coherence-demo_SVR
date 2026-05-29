@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\processuse;
+use App\Models\Processuse;
 use App\Models\Objectif;
 use App\Models\Resva;
 use App\Models\Risque;
@@ -161,7 +161,7 @@ class AmeliorationController extends Controller
 
         $postes = Poste::where('occupe', '=', 'oui')->get();
 
-        $processuss = processuse::where('user_id', '=', Auth::user()->id )->get();
+        $processuss = Processuse::where('user_id', '=', Auth::user()->id )->get();
 
         $color_para = Color_para::where('nbre0', '=', '0')->first();
         $color_intervals = Color_interval::orderBy('nbre1', 'asc')->get();
@@ -215,7 +215,7 @@ class AmeliorationController extends Controller
             $action->risque = $risque->nom;
             $action->risque_id = $risque->id;
 
-            $processus = processuse::find($risque->processus_id);
+            $processus = Processuse::find($risque->processus_id);
             $action->processus = $processus->nom;
             $action->processus_id = $processus->id;
 
@@ -245,7 +245,7 @@ class AmeliorationController extends Controller
             $action->risque = $risque->nom;
             $action->risque_id = $risque->id;
 
-            $processus = processuse::find($risque->processus_id);
+            $processus = Processuse::find($risque->processus_id);
             $action->processus = $processus->nom;
             $action->processus_id = $processus->id;
 

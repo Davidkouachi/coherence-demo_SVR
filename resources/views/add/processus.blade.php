@@ -33,7 +33,7 @@
                                                         <span>Fichier ( .pdf )</span>
                                                         <span class="badge rounded bg-danger">Version Pro</span>
                                                     </label>
-                                                    <input disabled autocomplete="off" id="fileInput" name="pdfFile" accept=".pdf" type="file" class="form-control" id="">
+                                                    <input @if(session('user_poste')->nom != 'pro') disabled @endif  autocomplete="off" id="fileInput" name="pdfFile" accept=".pdf" type="file" class="form-control" id="">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">

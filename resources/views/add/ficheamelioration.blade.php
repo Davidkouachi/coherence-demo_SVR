@@ -1200,7 +1200,7 @@
                         }
                     } else if (choixSelect === "risque") {
                         if (selectedRisque === '') {
-                            NioApp.Toast("<h5>Alert</h5><p>Veuillez sélectionner un risque.</p>.", "warning", {position: "top-right"});
+                            {{-- NioApp.Toast("<h5>Alert</h5><p>Veuillez sélectionner un risque.</p>.", "warning", {position: "top-right"}); --}}
                             Swal.fire({
                                 icon: "info",
                                 title: "Alert",

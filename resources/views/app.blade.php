@@ -4,15 +4,15 @@
 
 <head>
     <meta charset="utf-8"></meta>
-    <meta content="Softnio" name="author"></meta>
+    <meta content="COHERENCE" name="author"></meta>
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"></meta>
-    <meta content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers." name="description"></meta>
+    <meta content="" name="description"></meta>
     <link href="{{ asset('images/logo.png') }}" rel="shortcut icon"></link>
     <title>@yield('titre')</title>
     <link href="{{ asset('assets/css/dashlite0226.css') }}" rel="stylesheet"></link>
     <link href="{{ asset('assets/css/theme0226.css') }}" rel="stylesheet"></link>
     <script src="{{ asset('chart.js') }}"></script>
-    <script src="{{ asset('pusher.min.js') }}"></script>
+    {{-- <script src="{{ asset('pusher.min.js') }}"></script> --}}
 </head>
 
 <body class="nk-body bg-lighter ">
@@ -558,12 +558,12 @@
         </div>
     </div> --}}
 
-    <script>
+    {{-- <script>
         document.getElementById('logoutBtn').addEventListener('click', function(event) {
             event.preventDefault(); // Pour éviter le comportement par défaut du lien
             window.location.reload();
         });
-    </script>
+    </script> --}}
 
     {{-- <script>
         function afficherModalApresDelai() {

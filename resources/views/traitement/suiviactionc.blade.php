@@ -268,7 +268,11 @@
                                                                         // Comparer les dates
                                                                         if (inputDate < validationDate.setDate(validationDate.getDate() - 0)) {
                                                                             dateInput.value = "";
-                                                                            toastr.info("La date d'action ne doit pas être supérieur a la date de validation de la fiche d'incident.");
+                                                                            Swal.fire({
+                                                                                icon: "info",
+                                                                                title: "Alerte",
+                                                                                text: "La date d'action ne doit pas être supérieur a la date de validation de la fiche d'incident.",
+                                                                            });
                                                                         }
                                                                     }
                                                                 </script>

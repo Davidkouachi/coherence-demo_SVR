@@ -34,22 +34,23 @@ class StatistiqueController extends Controller
 
     public function index_stat()
     {
-        $processus = Processuse::all();
-        $risques = Risque::where('page', 'risk')->get();
+        $processus = Processuse::where('user_id', Auth::user()->id)->get();
+        $risques = Risque::where('page', 'risk')->where('user_id', Auth::user()->id)->get();
         $nbre_processus = $processus->count();
-        $nbre_risque = Risque::where('page', 'risk')->count();
-        $nbre_cause = Cause::where('page', 'risk')->count();
+        $nbre_risque = Risque::where('page', 'risk')->where('user_id', Auth::user()->id)->count();
+        $nbre_cause = Cause::join('risques','risques.id','=','causes.risque_id')->where('causes.page', 'risk')->where('risques.user_id', Auth::user()->id)->count();
 
-        $nbre_am = Amelioration::all()->count();
-        $nbre_am_nci = Amelioration::where('type', '=', 'non_conformite_interne')->count();
-        $nbre_am_r = Amelioration::where('type', '=', 'reclamation')->count();
-        $nbre_am_c = Amelioration::where('type', '=', 'contentieux')->count();
+        $nbre_am = Amelioration::where('user_id', Auth::user()->id)->count();
+        $nbre_am_nci = Amelioration::where('type', '=', 'non_conformite_interne')->where('user_id', Auth::user()->id)->count();
+        $nbre_am_r = Amelioration::where('type', '=', 'reclamation')->where('user_id', Auth::user()->id)->count();
+        $nbre_am_c = Amelioration::where('type', '=', 'contentieux')->where('user_id', Auth::user()->id)->count();
 
-        $nbre_ris_soumis = Risque::where('statut', 'soumis')->count();
+        $nbre_ris_soumis = Risque::where('statut', 'soumis')->where('user_id', Auth::user()->id)->count();
         $nbre_ris_n_valider = Risque::where('statut', 'non_valider')
+                                    ->where('user_id', Auth::user()->id)
                                     ->Orwhere('statut', 'update')
                                     ->count();
-        $nbre_ris_valider =Risque::where('statut', 'valider')->count();
+        $nbre_ris_valider =Risque::where('statut', 'valider')->where('user_id', Auth::user()->id)->count();
 
         $types = ['non_conformite_interne', 'reclamation', 'contentieux'];
 
@@ -60,17 +61,17 @@ class StatistiqueController extends Controller
         foreach ($types as $type) {
             $statistics[$type] = [];
 
-            $statistics[$type]['total'] = Amelioration::where('ameliorations.type', $type)->count();
+            $statistics[$type]['total'] = Amelioration::where('ameliorations.type', $type)->where('ameliorations.user_id', Auth::user()->id)->count();
 
-            $statistics[$type]['causes'] = Amelioration::where('ameliorations.type', $type)->where('choix_select', 'cause')->count();
+            $statistics[$type]['causes'] = Amelioration::where('ameliorations.type', $type)->where('ameliorations.user_id', Auth::user()->id)->where('choix_select', 'cause')->count();
 
-            $statistics[$type]['risques'] = Amelioration::where('ameliorations.type', $type)->where('choix_select', 'risque')->count();
+            $statistics[$type]['risques'] = Amelioration::where('ameliorations.type', $type)->where('ameliorations.user_id', Auth::user()->id)->where('choix_select', 'risque')->count();
                 
-            $statistics[$type]['causes_risques_nt'] = Amelioration::where('ameliorations.type', $type)->where('choix_select', 'cause_risque_nt')->count();
+            $statistics[$type]['causes_risques_nt'] = Amelioration::where('ameliorations.type', $type)->where('ameliorations.user_id', Auth::user()->id)->where('choix_select', 'cause_risque_nt')->count();
 
             if($nbre_am > 0){
 
-                $nbre = Amelioration::where('type', $type)->count();
+                $nbre = Amelioration::where('type', $type)->where('user_id', Auth::user()->id)->count();
                 $statistics[$type]['progres'] = ($nbre / $nbre_am) * 100;
                 $statistics[$type]['progres'] = number_format($statistics[$type]['progres'], 2);
                 
@@ -81,23 +82,34 @@ class StatistiqueController extends Controller
             }
         }
         
-        $nbre_ap = Action::where('type', 'preventive')->count();
+        $nbre_ap = Action::join('risques','risques.id','=','actions.risque_id')->where('risques.user_id', Auth::user()->id)->where('actions.type', 'preventive')->count();
 
         $nbre_ed_ap = Suivi_action::join('actions', 'actions.id', '=', 'suivi_actions.action_id')
                                     ->join('risques', 'risques.id', '=', 'actions.risque_id')
                                     ->where('suivi_actions.statut', 'realiser')
                                     ->where('actions.date', '>=', 'suivi_actions.date_action')
+                                    ->where('risques.user_id', Auth::user()->id)
                                     ->count();
 
         $nbre_ehd_ap = Suivi_action::join('actions', 'actions.id', '=', 'suivi_actions.action_id')
                                     ->join('risques', 'risques.id', '=', 'actions.risque_id')
                                     ->where('suivi_actions.statut', 'realiser')
                                     ->where('actions.date', '<', 'suivi_actions.date_action')
+                                    ->where('risques.user_id', Auth::user()->id)
                                     ->count();
 
-        $nbre_hd_ap = Suivi_action::where('statut', '=', 'non-realiser')->count();
+        $nbre_hd_ap = Suivi_action::join('actions', 'actions.id', '=', 'suivi_actions.action_id')
+                                    ->join('risques', 'risques.id', '=', 'actions.risque_id')
+                                    ->where('suivi_actions.statut', '=', 'non-realiser')
+                                    ->where('risques.user_id', Auth::user()->id)
+                                    ->count();
 
-        $nbre_ac = Action::where('type', 'corrective')->where('page', 'risk')->count();
+        $nbre_ac = Action::join('risques', 'risques.id', '=', 'actions.risque_id')
+                            ->where('risques.user_id', Auth::user()->id)
+                            ->where('actions.type', 'corrective')
+                            ->where('actions.page', 'risk')
+                            ->count();
+
         $nbre_poste = Poste::all()->count();
 
         $users = User::join('postes', 'users.poste_id', '=', 'postes.id')
@@ -112,21 +124,30 @@ class StatistiqueController extends Controller
         $color_intervals = Color_interval::orderBy('nbre1', 'asc')->get();
         $color_interval_nbre = count($color_intervals);
 
-        $his = Historique_action::orderBy('created_at', 'desc')
+        $his = Historique_action::where('user_id', Auth::user()->id)
+                                ->orderBy('created_at', 'desc')
                                 ->limit(10)
                                 ->get();
 
-        $staut_am_soumis = Amelioration::where('statut', 'soumis')->count();
+        $staut_am_soumis = Amelioration::where('statut', 'soumis')
+                                        ->where('user_id', Auth::user()->id)
+                                        ->count();
         $staut_am_rejeter = Amelioration::where('statut', 'non-valider')
+                                        ->where('user_id', Auth::user()->id)
                                         ->Orwhere('statut', 'modif')
                                         ->Orwhere('statut', 'update')
                                         ->count();
-        $staut_am_valider = Amelioration::where('statut', 'valider')->count();
-        $staut_am_eff = Amelioration::where('statut', 'date_efficacite')->count();
-        $staut_am_clotu = Amelioration::where('statut', 'cloturer')->count();
+        $staut_am_valider = Amelioration::where('statut', 'valider')
+                                        ->where('user_id', Auth::user()->id)
+                                        ->count();
+        $staut_am_eff = Amelioration::where('statut', 'date_efficacite')
+                                        ->where('user_id', Auth::user()->id)
+                                        ->count();
+        $staut_am_clotu = Amelioration::where('statut', 'cloturer')
+                                        ->where('user_id', Auth::user()->id)
+                                        ->count();
 
-
-        $types_processus = Processuse::all();
+        $types_processus = Processuse::where('user_id', Auth::user()->id)->get();
         $objectifData = [];
         $risqsData = [];
 
@@ -193,6 +214,7 @@ class StatistiqueController extends Controller
 
         $types_risque = Risque::join('postes', 'risques.poste_id', '=', 'postes.id')
                             ->where('risques.page', '!=', 'am')
+                            ->where('risques.user_id', Auth::user()->id)
                             ->select('risques.*','postes.nom as validateur')
                             ->get();
         $causesData = [];
@@ -289,6 +311,7 @@ class StatistiqueController extends Controller
 
         $types_cause = cause::join('risques', 'causes.risque_id', 'risques.id')
                         ->join('processuses', 'risques.processus_id', 'processuses.id')
+                        ->where('risques.user_id', Auth::user()->id)
                         ->select('causes.*','risques.nom as risque', 'processuses.nom as processus')
                         ->get();
 
@@ -311,13 +334,19 @@ class StatistiqueController extends Controller
         }
 
         $nbre_action = Action::join('suivi_actions', 'suivi_actions.action_id', 'actions.id')
+                            ->join('risques', 'risques.id', 'actions.risque_id')
+                            ->where('risques.user_id', Auth::user()->id)
                             ->where('actions.type', 'preventive')
                             ->count();
         $nbre_action_neff = Action::join('suivi_actions', 'suivi_actions.action_id', 'actions.id')
+                            ->join('risques', 'risques.id', 'actions.risque_id')
+                            ->where('risques.user_id', Auth::user()->id)
                             ->where('actions.type', 'preventive')
                             ->where('suivi_actions.statut', 'non-realiser')
                             ->count();
         $nbre_action_eff = Action::join('suivi_actions', 'suivi_actions.action_id', 'actions.id')
+                            ->join('risques', 'risques.id', 'actions.risque_id')
+                            ->where('risques.user_id', Auth::user()->id)
                             ->where('actions.type', 'preventive')
                             ->where('suivi_actions.statut', 'realiser')
                             ->count();

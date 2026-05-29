@@ -85,6 +85,7 @@
                                                     {{ $nbre_ac }}
                                                 </div>
                                             </div>
+                                            @if (Auth::user()->id == 1 || Auth::user()->id == 2)
                                             <div class="invest-data-history col-md">
                                                 <div class="amount ">
                                                     Utilisateurs
@@ -101,6 +102,7 @@
                                                     {{ $nbre_poste }}
                                                 </div>
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

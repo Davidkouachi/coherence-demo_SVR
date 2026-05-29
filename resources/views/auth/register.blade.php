@@ -6,13 +6,14 @@
     <title>Création de compte</title>
     <link rel="stylesheet" href="{{asset('../../assets/css/dashlite0226.css')}}">
     <link id="skin-default" rel="stylesheet" href="{{asset('../../assets/css/theme0226.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/app/css/stylelogin.css') }}">
 </head>
 
 <body class="nk-body bg-white npc-general pg-auth">
     <div class="nk-app-root">
-        <div class="nk-main ">
-            <div class="nk-wrap nk-wrap-nosidebar">
-                <div class="nk-content " style="background: rgba(0, 0, 0, 0.1);">
+        <div class="nk-main " style="background: rgba(0, 0, 0, 0.5);">
+            <div class="nk-wrap nk-wrap-nosidebar d-flex align-items-center justify-content-center" >
+                <div class="nk-content ">
                     <div class="nk-block nk-block-middle nk-auth-body  wide-xxl">
                         <div class="card pt-0">
                             <div class="brand-logo pb-0 text-center">
